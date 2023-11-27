@@ -516,7 +516,7 @@ private:
   std::unique_ptr<clang::Parser> Parser;
 
   /// Clang parser, which is used to load textual headers.
-  std::unique_ptr<clang::MangleContext> Mangler;
+  std::shared_ptr<clang::MangleContext> Mangler;
 
   /// Clang arguments used to create the Clang invocation.
   std::vector<std::string> ClangArgs;
@@ -588,6 +588,10 @@ public:
   clang::CompilerInstance *getClangInstance() {
     return Instance.get();
   }
+
+  /// Writes the mangled name of \p clangDecl to \p os.
+  void getMangledName(std::shared_ptr<clang::MangleContext> mangler,
+                      const clang::NamedDecl *clangDecl, raw_ostream &os);
 
   /// Whether the C++ interoperability compatibility version is at least
   /// 'major'.

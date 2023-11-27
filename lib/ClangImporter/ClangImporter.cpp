@@ -4165,14 +4165,20 @@ void ClangModuleUnit::getImportedModulesForLookup(
 void ClangImporter::getMangledName(raw_ostream &os,
                                    const clang::NamedDecl *clangDecl) const {
   if (!Impl.Mangler)
-    Impl.Mangler.reset(Impl.getClangASTContext().createMangleContext());
+    Impl.Mangler.reset(getClangASTContext().createMangleContext());
 
+  return Impl.getMangledName(Impl.Mangler, clangDecl, os);
+}
+
+void ClangImporter::Implementation::getMangledName(
+    std::shared_ptr<clang::MangleContext> mangler, const clang::NamedDecl *clangDecl,
+    raw_ostream &os) {
   if (auto ctor = dyn_cast<clang::CXXConstructorDecl>(clangDecl)) {
     auto ctorGlobalDecl =
         clang::GlobalDecl(ctor, clang::CXXCtorType::Ctor_Complete);
-    Impl.Mangler->mangleCXXName(ctorGlobalDecl, os);
+    mangler->mangleCXXName(ctorGlobalDecl, os);
   } else {
-    Impl.Mangler->mangleName(clangDecl, os);
+    mangler->mangleName(clangDecl, os);
   }
 }
 
