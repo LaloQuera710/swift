@@ -805,12 +805,12 @@ IsSerialized_t SILDeclRef::isSerialized() const {
       return IsSerialized;
     }
 
-    // Otherwise, check if the owning declaration is public.
+    // Otherwise, check if the owning declaration is public or package.
     auto scope =
       d->getFormalAccessScope(/*useDC=*/nullptr,
                               /*treatUsableFromInlineAsPublic=*/true);
 
-    if (scope.isPublic())
+    if (scope.isPublicOrPackage())
       return IsSerialized;
     return IsNotSerialized;
   }
@@ -823,7 +823,7 @@ IsSerialized_t SILDeclRef::isSerialized() const {
     auto scope =
       nominal->getFormalAccessScope(/*useDC=*/nullptr,
                                     /*treatUsableFromInlineAsPublic=*/true);
-    if (!scope.isPublic())
+    if (!scope.isPublicOrPackage())
       return IsNotSerialized;
     if (nominal->isFormallyResilient())
       return IsNotSerialized;
